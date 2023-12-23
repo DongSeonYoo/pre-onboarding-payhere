@@ -24,8 +24,8 @@ export class UserEntity {
   @Column({
     name: 'refresh_token',
     nullable: true,
-    length: 60,
   })
+  @Exclude()
   refreshToken: string;
 
   @OneToMany(() => LedgerEntity, (ledger) => ledger.userId)
