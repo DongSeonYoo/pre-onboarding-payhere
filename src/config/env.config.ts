@@ -15,6 +15,14 @@ const env = {
     port: Number(process.env.POSTGRESQL_PORT) || 5432,
     max_connection: Number(process.env.POSTGRESQL_MAX_CONNECTION),
   },
+
+  jwt: {
+    access_secret: process.env.JWT_ACCESS_TOKEN_SECRET,
+    access_expires: process.env.JWT_ACCESS_EXPIRES_TIME,
+
+    refresh_expires: process.env.JWT_REFRESH_EXPIRES_TIME,
+    refresh_secret: process.env.JWT_REFRESH_TOKEN_SECRET,
+  },
 };
 
 export default env;
