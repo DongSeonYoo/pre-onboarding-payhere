@@ -1,0 +1,3 @@
+interface IRefreshTokenPayload {
+  id: number;
+}
