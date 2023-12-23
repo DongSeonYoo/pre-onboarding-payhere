@@ -15,7 +15,7 @@ export class LedgerEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => UserEntity, (user) => user.ledgers)
+  @ManyToOne(() => UserEntity, (user) => user.ledgers, { nullable: false })
   @JoinColumn({ name: 'user_id' })
   userId: UserEntity;
 
@@ -28,6 +28,9 @@ export class LedgerEntity {
   @Column({ type: 'text' })
   content: string;
 
+  @Column()
+  date: Date;
+
   @CreateDateColumn({ type: 'timestamp with time zone' })
   createdAt: Date;
 
@@ -35,5 +38,5 @@ export class LedgerEntity {
   updatedAt: Date;
 
   @DeleteDateColumn({ nullable: true })
-  deletedAt?: Date;
+  deletedAt?: Date | null;
 }

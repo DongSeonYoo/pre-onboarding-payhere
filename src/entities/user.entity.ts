@@ -7,6 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { LedgerEntity } from './ledger.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity({ name: 'user_tb' })
 export class UserEntity {
@@ -17,7 +18,15 @@ export class UserEntity {
   email: string;
 
   @Column({ type: 'char', length: 60 })
+  @Exclude()
   password: string;
+
+  @Column({
+    name: 'refresh_token',
+    nullable: true,
+    length: 60,
+  })
+  refreshToken: string;
 
   @OneToMany(() => LedgerEntity, (ledger) => ledger.userId)
   ledgers: LedgerEntity[];
