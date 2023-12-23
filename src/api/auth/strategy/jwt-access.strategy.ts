@@ -7,10 +7,10 @@ import { IAccessTokenPayload } from '../interface/access-payload.interface';
 import { UserService } from 'src/api/user/user.service';
 
 @Injectable()
-export class JwtAccessTokenGuard extends PassportStrategy(Strategy, 'jwt') {
+export class JwtAccessTokenStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly userService: UserService) {
     super({
-      JwtFromRequest: ExtractJwt.fromExtractors([
+      jwtFromRequest: ExtractJwt.fromExtractors([
         (req: Request) => {
           return req.cookies['access_token'];
         },

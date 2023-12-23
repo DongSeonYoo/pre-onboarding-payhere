@@ -1,8 +1,20 @@
-import { Body, Controller, Post, Req, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { SignupDto } from './dto/signup.dto';
 import { LoginDto } from './dto/login.dto';
 import { Response } from 'express';
+import { JwtAccessTokenStrategy } from '../auth/strategy/jwt-access.strategy';
+import { JwtAuthGuard } from '../auth/guard/jwt-access.guard';
 
 @Controller('user')
 export class UserController {
@@ -18,10 +30,17 @@ export class UserController {
     @Body() loginDto: LoginDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const accessToken = await this.userService.login(loginDto);
-    // res.setHeader('Set-Cookie', [accessToken]);
+    const { accessToken, refreshToken } =
+      await this.userService.login(loginDto);
     res.cookie('access_token', accessToken);
+    res.cookie('refresh_token', refreshToken);
 
-    res.send({ accessToken });
+    res.send({ accessToken, refreshToken });
+  }
+
+  @Get('/:userId')
+  @UseGuards(JwtAuthGuard)
+  async getUser(@Param('userId', new ParseIntPipe()) userId: number) {
+    return this.userService.findUserByIdx(userId);
   }
 }

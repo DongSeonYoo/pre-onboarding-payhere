@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { JwtModule, JwtService } from '@nestjs/jwt';
-import env from 'src/config/env.config';
+import { JwtService } from '@nestjs/jwt';
 import { HashingModule } from 'src/common/hashing/hashing.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UserEntity } from 'src/entities/user.entity';
 
 @Module({
-  imports: [HashingModule],
+  imports: [HashingModule, TypeOrmModule.forFeature([UserEntity])],
   exports: [AuthService],
   providers: [AuthService, JwtService],
 })
