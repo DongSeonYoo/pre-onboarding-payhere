@@ -1,11 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserEntity } from 'src/entities/user.entity';
 import { Repository } from 'typeorm';
-import { SignupDto } from './dto/signup.dto';
 import { HashingService } from 'src/common/hashing/hashing.service';
-import { LoginDto } from './dto/login.dto';
 import { AuthService } from '../auth/auth.service';
+import { UserEntity } from 'src/entities/user.entity';
+import { RequestLoginDto, RequestSignupDto } from './dto/request-user.dto';
 
 @Injectable()
 export class UserService {
@@ -18,7 +17,7 @@ export class UserService {
     private readonly authService: AuthService,
   ) {}
 
-  async signup(signupDto: SignupDto) {
+  async signup(signupDto: RequestSignupDto) {
     const { password } = signupDto;
 
     const hashedPassword = await this.hashingService.hash(password);
@@ -27,7 +26,7 @@ export class UserService {
     return this.userRepository.save(user);
   }
 
-  async login(loginDto: LoginDto) {
+  async login(loginDto: RequestLoginDto) {
     // 1. 해당하는 이메일을 가진 사용자가 있는지 확인
     const { email, password } = loginDto;
 
@@ -58,10 +57,16 @@ export class UserService {
   }
 
   async findUserByIdx(userIdx: number) {
-    return this.userRepository.findOne({
+    const user = await this.userRepository.findOne({
       where: {
         id: userIdx,
       },
     });
+
+    if (!user) {
+      throw new BadRequestException('해당하는 사용자가 존재하지 않습니다');
+    }
+
+    return user;
   }
 }
