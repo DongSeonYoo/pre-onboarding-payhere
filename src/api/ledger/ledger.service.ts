@@ -1,19 +1,34 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { LedgerEntity } from 'src/entities/ledger.entity';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { CreateLedgerDto } from './dto/request/create-ledger.req.dto';
 import { Repository } from 'typeorm';
-import { CreateLedgerDto } from './dto/create-ledger.dto';
+import { LedgerRepository } from './ledger.repository';
+import { UserEntity } from 'src/entities/user.entity';
+import { UpdateLedgerDto } from './dto/request/update-ledger.req.dto';
 
 @Injectable()
 export class LedgerService {
-  constructor(
-    @InjectRepository(LedgerEntity)
-    private readonly ledgerRepository: Repository<LedgerEntity>,
-  ) {}
+  constructor(private readonly ledgerRepository: LedgerRepository) {}
 
-  async createLedger(createLedgerDto: CreateLedgerDto) {
-    const ledger = createLedgerDto.toEntity();
+  async createLedger(createLedgerDto: CreateLedgerDto, user: UserEntity) {
+    const ledger = createLedgerDto.toEntity(user);
 
-    return this.ledgerRepository.save(ledger);
+    return this.ledgerRepository.createLedger(ledger);
+  }
+
+  async updateLedger(
+    ledgerId: number,
+    updateLedgerDto: UpdateLedgerDto,
+    user: UserEntity,
+  ) {
+    const ledger = await this.ledgerRepository.findLedger(ledgerId, user);
+    if (!ledger) {
+      throw new NotFoundException('해당하는 가계부가 존재하지 않습니다');
+    }
+
+    return this.ledgerRepository.updateLedger(ledgerId, updateLedgerDto);
   }
 }

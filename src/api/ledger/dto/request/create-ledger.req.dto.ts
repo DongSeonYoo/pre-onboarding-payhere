@@ -1,6 +1,13 @@
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsNumber, Length } from 'class-validator';
+import {
+  IsDate,
+  IsDateString,
+  IsNotEmpty,
+  IsNumber,
+  Length,
+} from 'class-validator';
 import { LedgerEntity } from 'src/entities/ledger.entity';
+import { UserEntity } from 'src/entities/user.entity';
 
 export class CreateLedgerDto {
   // 지출
@@ -19,11 +26,13 @@ export class CreateLedgerDto {
 
   // 소비 날짜
   @IsNotEmpty()
+  @IsDate()
   @Type(() => Date)
   date: Date;
 
-  toEntity() {
+  toEntity(user: UserEntity) {
     const ledger = new LedgerEntity();
+    ledger.userId = user;
     ledger.spending = this.spending;
     ledger.income = this.income;
     ledger.content = this.content;
